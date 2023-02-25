@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gridworld
 
-def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False):
+def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False, plot=False):
+    # sourcery skip: extract-method
     if verbose:
         print('------------- Policy Iteration -------------')
         print(f'hard_version = {hard_version}, theta = {theta}, gamma = {gamma}')
@@ -79,24 +80,25 @@ def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=Fa
         log['s'].append(s)
         log['a'].append(a)
         log['r'].append(r)
-    # Plot data and save to png file
-    plt.figure(figsize=(10, 5), dpi=100)
-    plt.subplot(1, 2, 1)
-    plt.plot(log['t'], log['s'], label='s')
-    plt.plot(log['t'][:-1], log['a'], label='a')
-    plt.plot(log['t'][:-1], log['r'], label='r')
-    plt.xlabel('t')
-    plt.ylabel('State / Action / Reward')
-    plt.legend()
+    if plot:
+        # Plot data and save to png file
+        plt.figure(figsize=(10, 5), dpi=100)
+        plt.subplot(1, 2, 1)
+        plt.plot(log['t'], log['s'], label='s')
+        plt.plot(log['t'][:-1], log['a'], label='a')
+        plt.plot(log['t'][:-1], log['r'], label='r')
+        plt.xlabel('t')
+        plt.ylabel('State / Action / Reward')
+        plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(log['n_iter'], [np.mean(V) for V in log['V']], label='V')
-    plt.xlabel('Number of iterations')
-    plt.ylabel('mean(V)')
-    plt.savefig('figures/gridworld/train_gridworld_policy_iteration.png')
+        plt.subplot(1, 2, 2)
+        plt.plot(log['n_iter'], [np.mean(V) for V in log['V']], label='V')
+        plt.xlabel('Number of iterations')
+        plt.ylabel('mean(V)')
+        plt.savefig('figures/gridworld/traj_return_policy_iteration.png', bbox_inches='tight')
     return V, pi, log
 
-def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False):  # sourcery skip: sum-comprehension
+def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False, plot=False):  # sourcery skip: extract-method, sum-comprehension
     if verbose:
         print('------------- Value Iteration -------------')
         print(f'hard_version = {hard_version}, theta = {theta}, gamma = {gamma}')
@@ -162,23 +164,23 @@ def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=Fal
         log['s'].append(s)
         log['a'].append(a)
         log['r'].append(r)
-    # Plot data and save to png file
-    plt.figure(figsize=(10, 5), dpi=100)
-    plt.subplot(1, 2, 1)
-    plt.plot(log['t'], log['s'], label='s')
-    plt.plot(log['t'][:-1], log['a'], label='a')
-    plt.plot(log['t'][:-1], log['r'], label='r')
-    plt.xlabel('t')
-    plt.ylabel('State / Action / Reward')
-    plt.legend()
+    if plot:
+        # Plot data and save to png file
+        plt.figure(figsize=(10, 5), dpi=100)
+        plt.subplot(1, 2, 1)
+        plt.plot(log['t'], log['s'], label='s')
+        plt.plot(log['t'][:-1], log['a'], label='a')
+        plt.plot(log['t'][:-1], log['r'], label='r')
+        plt.xlabel('t')
+        plt.ylabel('State / Action / Reward')
+        plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(log['n_iter'], [np.mean(V) for V in log['V']], label='V')
-    plt.xlabel('Number of iterations')
-    plt.ylabel('mean(V)')
-    plt.savefig('figures/gridworld/train_gridworld_value_iteration.png')
+        plt.subplot(1, 2, 2)
+        plt.plot(log['n_iter'], [np.mean(V) for V in log['V']], label='V')
+        plt.xlabel('Number of iterations')
+        plt.ylabel('mean(V)')
+        plt.savefig('figures/gridworld/traj_return_value_iteration.png', bbox_inches='tight')
     return V, pi, log
-
 
 def epsilon_greedy_action(Q, epsilon, s, return_best_action=False):
     # initialize policy
@@ -191,7 +193,7 @@ def epsilon_greedy_action(Q, epsilon, s, return_best_action=False):
     a = np.random.choice(Q.shape[1], p=pi)
     return a_star if return_best_action else a
 
-def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False):
+def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False, plot=False):
     # sourcery skip: extract-duplicate-method
     if verbose:
         print('------------- SARSA -------------')
@@ -232,25 +234,26 @@ def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, 
     if verbose:
         print(f'Q: \n {Q}')
         print(f'pi: \n {pi.reshape(5,5)}')
-    # Plot data and save to png file
-    plt.figure(figsize=(10, 5), dpi=100)
-    plt.subplot(1, 2, 1)
-    plt.plot(log['t'], log['s'], label='s')
-    plt.plot(log['t'][:-1], log['a'], label='a')
-    plt.plot(log['t'][:-1], log['r'], label='r')
-    plt.xlabel('t')
-    plt.ylabel('State / Action / Reward')
-    plt.legend()
+    if plot:
+        # Plot data and save to png file
+        plt.figure(figsize=(10, 5), dpi=100)
+        plt.subplot(1, 2, 1)
+        plt.plot(log['t'], log['s'], label='s')
+        plt.plot(log['t'][:-1], log['a'], label='a')
+        plt.plot(log['t'][:-1], log['r'], label='r')
+        plt.xlabel('t')
+        plt.ylabel('State / Action / Reward')
+        plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
-    plt.xlabel('Number of episodes')
-    plt.ylabel('Return')
-    plt.legend()
-    plt.savefig('figures/gridworld/train_gridworld_sarsa.png')
+        plt.subplot(1, 2, 2)
+        plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
+        plt.xlabel('Number of episodes')
+        plt.ylabel('Return')
+        plt.legend()
+        plt.savefig('figures/gridworld/traj_return_sarsa.png', bbox_inches='tight')
     return Q, pi, log
 
-def gridworld_q_learning(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False):
+def gridworld_q_learning(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False, plot=False):
     # sourcery skip: extract-duplicate-method
     if verbose:
         print('------------- Q-Learning -------------')
@@ -289,25 +292,26 @@ def gridworld_q_learning(hard_version, alpha, epsilon, num_episodes=100, gamma=0
     if verbose:
         print(f'Q: \n {Q}')
         print(f'pi: \n {pi.reshape(5,5)}')
-    # Plot data and save to png file
-    plt.figure(figsize=(10, 5), dpi=100)
-    plt.subplot(1, 2, 1)
-    plt.plot(log['t'], log['s'], label='s')
-    plt.plot(log['t'][:-1], log['a'], label='a')
-    plt.plot(log['t'][:-1], log['r'], label='r')
-    plt.xlabel('t')
-    plt.ylabel('State / Action / Reward')
-    plt.legend()
+    if plot:
+        # Plot data and save to png file
+        plt.figure(figsize=(10, 5), dpi=100)
+        plt.subplot(1, 2, 1)
+        plt.plot(log['t'], log['s'], label='s')
+        plt.plot(log['t'][:-1], log['a'], label='a')
+        plt.plot(log['t'][:-1], log['r'], label='r')
+        plt.xlabel('t')
+        plt.ylabel('State / Action / Reward')
+        plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
-    plt.xlabel('Number of episodes')
-    plt.ylabel('Return')
-    plt.legend()
-    plt.savefig('figures/gridworld/train_gridworld_q_learning.png')
+        plt.subplot(1, 2, 2)
+        plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
+        plt.xlabel('Number of episodes')
+        plt.ylabel('Return')
+        plt.legend()
+        plt.savefig('figures/gridworld/traj_return_q_learning.png', bbox_inches='tight')
     return Q, pi, log
 
-def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose=False, suffix=''):
+def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose=False, method=''):
     # sourcery skip: extract-duplicate-method
     if verbose:
         print('------------- TD(0) -------------')
@@ -343,7 +347,7 @@ def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose
             n_iter += 1
         log['G'].append(G)
     if verbose:
-        print(f'V: \n {V}')
+        print(f'V: \n {V.reshape(5,5)}')
     # Plot data and save to png file
     plt.figure(figsize=(10, 5), dpi=100)
     plt.subplot(1, 2, 1)
@@ -355,28 +359,119 @@ def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose
     plt.legend()
 
     plt.subplot(1, 2, 2)
-    plt.plot(np.arange(env.num_states), V, '-', label='V')
+    plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
     plt.xlabel('Number of episodes')
-    plt.ylabel('State-value function')
+    plt.ylabel('Return')
     plt.legend()
-    plt.savefig(f'figures/gridworld/train_gridworld_td0{suffix}.png')
+    plt.savefig(f'figures/gridworld/traj_return_td0_{method}.png', bbox_inches='tight')
     return V, log
+
+def plot_policy_value_function(V, pi, method):
+    # sourcery skip: extract-duplicate-method, use-itertools-product
+    cmap = 'Blues'
+    textcolor = 'xkcd:red'
+    # Plot data and save to png file
+    plt.figure(figsize=(10, 5), dpi=100)
+    plt.subplot(1, 2, 1)
+    plt.imshow(V.reshape(5, 5), cmap=cmap)
+    plt.title('State-value function')
+    for i in range(5):
+        for j in range(5):
+            plt.text(j, i, f'{V[i*5+j]:0.2f}', ha='center', va='center', color=textcolor, fontsize=12)
+    ax = plt.gca()
+    # Major ticks
+    ax.set_xticks(np.arange(0, 5, 1))
+    ax.set_yticks(np.arange(0, 5, 1))
+    # Labels for major ticks
+    ax.set_xticklabels(np.arange(1, 6, 1))
+    ax.set_yticklabels(np.arange(1, 6, 1))
+
+    policy_map = {0: 'right', 1: 'up', 2: 'left', 3: 'down'}
+    plt.subplot(1, 2, 2)
+    plt.imshow(pi.reshape(5, 5), cmap=cmap)
+    plt.title('Policy')
+    for i in range(5):
+        for j in range(5):
+            plt.text(j, i, f'{policy_map[pi[i*5+j]]}', ha='center', va='center', color=textcolor, fontsize=12)
+    ax = plt.gca()
+    # Major ticks
+    ax.set_xticks(np.arange(0, 5, 1))
+    ax.set_yticks(np.arange(0, 5, 1))
+    # Labels for major ticks
+    ax.set_xticklabels(np.arange(1, 6, 1))
+    ax.set_yticklabels(np.arange(1, 6, 1))
+    plt.savefig(f'figures/gridworld/V_pi_{method}.png', bbox_inches='tight')
+    return None
+
+def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
+    alpha_nom = 1.0
+    alpha_min = 0.1
+    alpha_max = 1.0
+    alpha_step = 0.1
+    alpha_num_steps = int((alpha_max-alpha_min)/alpha_step)+1
+    alpha_arr = np.linspace(alpha_min, alpha_max, alpha_num_steps)
+
+    epsilon_nom = 0.1
+    epsilon_min_power = -10
+    epsilon_max_power = -1
+    epsilon_num_steps = int(epsilon_max_power - epsilon_min_power) + 1
+    epsilon_arr = np.logspace(epsilon_min_power, epsilon_max_power, epsilon_num_steps)
+
+    plt.figure(figsize=(12, 5), dpi=100)
+    plt.subplot(1, 2, 1)
+    for epsilon in epsilon_arr:
+        if method == 'sarsa':
+            Q, pi, log = gridworld_sarsa(hard_version, alpha_nom, epsilon, num_episodes, gamma, verbose=False, plot=False)
+        elif method == 'q_learning':
+            Q, pi, log = gridworld_q_learning(hard_version, alpha_nom, epsilon, num_episodes, gamma, verbose=False, plot=False)
+        else:
+            raise ValueError(f'Unknown method: {method}')
+        plt.plot(np.arange(num_episodes), log['G'], label=f'epsilon={epsilon:0.1e}')
+    plt.xlabel('Number of episodes')
+    plt.ylabel('Return')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    for alpha in alpha_arr:
+        if method == 'sarsa':
+            Q, pi, log = gridworld_sarsa(hard_version, alpha, epsilon_nom, num_episodes, gamma, verbose=False, plot=False)
+        elif method == 'q_learning':
+            Q, pi, log = gridworld_q_learning(hard_version, alpha, epsilon_nom, num_episodes, gamma, verbose=False, plot=False)
+        else:
+            raise ValueError(f'Unknown method: {method}')
+        plt.plot(np.arange(num_episodes), log['G'], label=f'alpha={alpha:0.1f}')
+    plt.xlabel('Number of episodes')
+    plt.ylabel('Return')
+    plt.legend()
+    plt.savefig(f'figures/gridworld/diff_epsilon_alpha_{method}.png', bbox_inches='tight')
+
+    return None
 
 def main():
     verbose = True
     hard_version = False
+
     theta = 1e-16
     gamma = 0.95
-    V, pi, log = gridworld_policy_iteration(hard_version, theta, gamma, verbose)
-    V, pi, log = gridworld_value_iteration(hard_version, theta, gamma, verbose)
+    V, pi, log = gridworld_policy_iteration(hard_version, theta, gamma, verbose, plot=True)
+    plot_policy_value_function(V, pi, method='policy_iteration')
+    
+    V, pi, log = gridworld_value_iteration(hard_version, theta, gamma, verbose, plot=True)
+    plot_policy_value_function(V, pi, method='value_iteration')
 
-    alpha = 0.5
+
+    alpha = 1.0
     epsilon = 0.1
-    num_episodes = 1000
-    Q, pi, log = gridworld_sarsa(hard_version, alpha, epsilon, num_episodes, gamma, verbose)
-    V, log = gridworld_td0(hard_version, pi, alpha, num_episodes, gamma, verbose, suffix='_sarsa')
-    Q, pi, log = gridworld_q_learning(hard_version, alpha, epsilon, num_episodes, gamma, verbose)
-    V, log = gridworld_td0(hard_version, pi, alpha, num_episodes, gamma, verbose, suffix='_q_learning')
+    num_episodes = 100
+    Q, pi, log = gridworld_sarsa(hard_version, alpha, epsilon, num_episodes, gamma, verbose, plot=True)
+    V, log = gridworld_td0(hard_version, pi, alpha, num_episodes, gamma, verbose, method='sarsa')
+    plot_policy_value_function(V, pi, method='sarsa')
+    plot_diff_epsilon_alpha(hard_version, method='sarsa', num_episodes=num_episodes, gamma=gamma)
+    
+    Q, pi, log = gridworld_q_learning(hard_version, alpha, epsilon, num_episodes, gamma, verbose, plot=True)
+    V, log = gridworld_td0(hard_version, pi, alpha, num_episodes, gamma, verbose, method='q_learning')
+    plot_policy_value_function(V, pi, method='q_learning')
+    plot_diff_epsilon_alpha(hard_version, method='q_learning', num_episodes=num_episodes, gamma=gamma)
 
 if __name__ == '__main__':
     main()
