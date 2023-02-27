@@ -1,4 +1,3 @@
-import random
 import numpy as np
 import matplotlib.pyplot as plt
 import gridworld
@@ -204,7 +203,7 @@ def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, 
     # apply SARSA to find optimal policy and value function
     # initialize value function
     Q = np.zeros((env.num_states, env.num_actions))
-    log = {'t': [], 's': [], 'a': [], 'r': [], 'G': []}
+    log = {'G': []}
     for _ in range(num_episodes):
         # Initialize simulation
         s = env.reset()
@@ -264,7 +263,7 @@ def gridworld_q_learning(hard_version, alpha, epsilon, num_episodes=100, gamma=0
     # apply Q-Learning to find optimal policy and value function
     # initialize value function
     Q = np.zeros((env.num_states, env.num_actions))
-    log = {'t': [], 's': [], 'a': [], 'r': [], 'G': []}
+    log = {'G': []}
     for _ in range(num_episodes):
         # Initialize simulation
         s = env.reset()
@@ -322,7 +321,7 @@ def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose
     # apply TD(0) to find optimal value function
     # initialize value function
     V = np.zeros(env.num_states)
-    log = {'t': [], 's': [], 'r': [], 'G': []}
+    log = {'G': []}
     for _ in range(num_episodes):
         # Initialize simulation
         s = env.reset()
@@ -426,7 +425,7 @@ def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
             Q, pi, log = gridworld_q_learning(hard_version, alpha_nom, epsilon, num_episodes, gamma, verbose=False, plot=False)
         else:
             raise ValueError(f'Unknown method: {method}')
-        plt.plot(np.arange(num_episodes), log['G'], label=f'epsilon={epsilon:0.1e}')
+        plt.plot(np.arange(num_episodes), log['G'], label=fr'$\epsilon$={epsilon:0.1e}')
     plt.xlabel('Number of episodes')
     plt.ylabel('Return')
     plt.legend()
@@ -439,7 +438,7 @@ def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
             Q, pi, log = gridworld_q_learning(hard_version, alpha, epsilon_nom, num_episodes, gamma, verbose=False, plot=False)
         else:
             raise ValueError(f'Unknown method: {method}')
-        plt.plot(np.arange(num_episodes), log['G'], label=f'alpha={alpha:0.1f}')
+        plt.plot(np.arange(num_episodes), log['G'], label=fr'$\alpha$={alpha:0.1f}')
     plt.xlabel('Number of episodes')
     plt.ylabel('Return')
     plt.legend()
@@ -460,7 +459,7 @@ def main():
     plot_policy_value_function(V, pi, method='value_iteration')
 
 
-    alpha = 1.0
+    alpha = 0.5
     epsilon = 0.1
     num_episodes = 100
     Q, pi, log = gridworld_sarsa(hard_version, alpha, epsilon, num_episodes, gamma, verbose, plot=True)
