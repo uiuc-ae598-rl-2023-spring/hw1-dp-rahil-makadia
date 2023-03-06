@@ -182,15 +182,8 @@ def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=Fal
     return V, pi, log
 
 def epsilon_greedy_action(Q, epsilon, s, return_best_action=False):
-    # initialize policy
-    pi = np.ones(Q.shape[1]) * epsilon / Q.shape[1]
-    # Choose A from S using policy derived from Q (e.g., "-greedy)
-    a_star = np.argmax(Q[s])
-    # add probability of 1-epsilon to greedy action
-    pi[a_star] += 1 - epsilon
-    # choose action according to pi
-    a = np.random.choice(Q.shape[1], p=pi)
-    return a_star if return_best_action else a
+    random_action = np.random.uniform(0,1)
+    return np.argmax(Q[s]) if random_action > epsilon else np.random.randint(0, Q.shape[1])
 
 def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False, plot=False):
     # sourcery skip: extract-duplicate-method
@@ -246,7 +239,7 @@ def gridworld_sarsa(hard_version, alpha, epsilon, num_episodes=100, gamma=0.95, 
 
         plt.subplot(1, 2, 2)
         plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
-        plt.xlabel('Number of episodes')
+        plt.xlabel('Episode #')
         plt.ylabel('Return')
         plt.legend()
         plt.savefig('figures/gridworld/traj_return_sarsa.png', bbox_inches='tight')
@@ -304,7 +297,7 @@ def gridworld_q_learning(hard_version, alpha, epsilon, num_episodes=100, gamma=0
 
         plt.subplot(1, 2, 2)
         plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
-        plt.xlabel('Number of episodes')
+        plt.xlabel('Episode #')
         plt.ylabel('Return')
         plt.legend()
         plt.savefig('figures/gridworld/traj_return_q_learning.png', bbox_inches='tight')
@@ -359,7 +352,7 @@ def gridworld_td0(hard_version, pi, alpha, num_episodes=100, gamma=0.95, verbose
 
     plt.subplot(1, 2, 2)
     plt.plot(np.arange(num_episodes), log['G'], '-', label='G')
-    plt.xlabel('Number of episodes')
+    plt.xlabel('Episode #')
     plt.ylabel('Return')
     plt.legend()
     plt.savefig(f'figures/gridworld/traj_return_td0_{method}.png', bbox_inches='tight')
@@ -426,7 +419,7 @@ def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
         else:
             raise ValueError(f'Unknown method: {method}')
         plt.plot(np.arange(num_episodes), log['G'], label=fr'$\epsilon$={epsilon:0.1e}')
-    plt.xlabel('Number of episodes')
+    plt.xlabel('Episode #')
     plt.ylabel('Return')
     plt.legend()
 
@@ -439,7 +432,7 @@ def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
         else:
             raise ValueError(f'Unknown method: {method}')
         plt.plot(np.arange(num_episodes), log['G'], label=fr'$\alpha$={alpha:0.1f}')
-    plt.xlabel('Number of episodes')
+    plt.xlabel('Episode #')
     plt.ylabel('Return')
     plt.legend()
     plt.savefig(f'figures/gridworld/diff_epsilon_alpha_{method}.png', bbox_inches='tight')
@@ -448,6 +441,8 @@ def plot_diff_epsilon_alpha(hard_version, method, num_episodes=100, gamma=0.95):
 
 def main():
     verbose = True
+    if verbose:
+        print('-------------------------- Gridworld --------------------------')
     hard_version = False
 
     theta = 1e-16
@@ -461,7 +456,7 @@ def main():
 
     alpha = 0.5
     epsilon = 0.1
-    num_episodes = 100
+    num_episodes = 5000
     Q, pi, log = gridworld_sarsa(hard_version, alpha, epsilon, num_episodes, gamma, verbose, plot=True)
     V, log = gridworld_td0(hard_version, pi, alpha, num_episodes, gamma, verbose, method='sarsa')
     plot_policy_value_function(V, pi, method='sarsa')
