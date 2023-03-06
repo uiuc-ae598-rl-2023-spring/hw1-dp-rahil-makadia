@@ -26,23 +26,6 @@ def epsilon_greedy_action(Q, epsilon, s, return_best_action=False):
     random_action = np.random.uniform(0,1)
     return np.argmax(Q[s]) if random_action > epsilon else np.random.randint(0, Q.shape[1])
 
-def get_policy(Q, env):
-    # initialize policy
-    pi = np.zeros(env.num_states)
-    # Choose A from S using policy derived from Q (e.g., "-greedy)
-    for s in range(env.num_states):
-        q_max_prev = None
-        action_good = [] # list of actions with same q_max
-        for a in range(env.num_actions):
-            if q_max_prev is None or Q[s, a] > q_max_prev:
-                action_good = [a]
-                q_max_prev = Q[s, a]
-            elif Q[s, a] == q_max_prev:
-                action_good.append(a)
-        good_prob = 1 / len(action_good)
-        pi[s] = np.argmax([good_prob if a in action_good else 0 for a in range(env.num_actions)])
-    return pi
-
 def pendulum_sarsa(n_theta, n_thetadot, n_tau, alpha, epsilon, num_episodes=100, gamma=0.95, verbose=False, plot=False):
     # sourcery skip: extract-duplicate-method
     if verbose:
@@ -92,8 +75,7 @@ def pendulum_sarsa(n_theta, n_thetadot, n_tau, alpha, epsilon, num_episodes=100,
             G += r*gamma**n_iter
             n_iter += 1
         log['G'].append(G)
-    pi = get_policy(Q, env)
-    # pi = np.argmax(Q, axis=1)
+    pi = np.argmax(Q, axis=1)
     if verbose:
         print(f'Q: \n {Q}')
         print(f'pi: \n {pi.reshape(n_theta, n_thetadot)}')
@@ -174,8 +156,7 @@ def pendulum_q_learning(n_theta, n_thetadot, n_tau, alpha, epsilon, num_episodes
             G += r*gamma**n_iter
             n_iter += 1
         log['G'].append(G)
-    pi = get_policy(Q, env)
-    # pi = np.argmax(Q, axis=1)
+    pi = np.argmax(Q, axis=1)
     if verbose:
         print(f'Q: \n {Q}')
         print(f'pi: \n {pi.reshape(n_theta, n_thetadot)}')
@@ -285,9 +266,26 @@ def pendulum_td0(n_theta, n_thetadot, n_tau, pi, alpha, num_episodes=100, gamma=
         plt.savefig(f'figures/pendulum/traj_return_td0_{method}.png', bbox_inches='tight')
     return V, log
 
+def plot_policy_value_function(V, pi, method):
+    # sourcery skip: extract-duplicate-method
+    plt.figure(figsize=(10, 5), dpi=100)
+    plt.subplot(1, 2, 1)
+    plt.plot(np.arange(len(V)), V, '.', label='V')
+    plt.xlabel('State')
+    plt.ylabel('Value')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(np.arange(len(pi)), pi, '.', label='pi')
+    plt.xlabel('State')
+    plt.ylabel('Action')
+    plt.legend()
+    plt.savefig(f'figures/pendulum/V_pi_{method}.png', bbox_inches='tight')
+    return None
+
 def plot_diff_epsilon_alpha(n_theta, n_thetadot, n_tau, method, num_episodes=100, gamma=0.95):
     # sourcery skip: extract-duplicate-method
-    alpha_nom = 0.5
+    alpha_nom = 0.3
     alpha_min = 0.1
     alpha_max = 1.0
     alpha_step = 0.1
@@ -296,7 +294,7 @@ def plot_diff_epsilon_alpha(n_theta, n_thetadot, n_tau, method, num_episodes=100
 
     epsilon_nom = 0.8
     epsilon_min_power = -10
-    epsilon_max_power = -1
+    epsilon_max_power = 0
     epsilon_num_steps = int(epsilon_max_power - epsilon_min_power) + 1
     epsilon_arr = np.logspace(epsilon_min_power, epsilon_max_power, epsilon_num_steps)
 
@@ -347,10 +345,12 @@ def main():
     num_episodes = 3000
     Q, pi, log = pendulum_sarsa(n_theta, n_thetadot, n_tau, alpha, epsilon, num_episodes=num_episodes, gamma=gamma, verbose=verbose, plot=True)
     V, log = pendulum_td0(n_theta, n_thetadot, n_tau, pi, alpha, num_episodes=num_episodes, gamma=gamma, verbose=verbose, method='sarsa', plot=True)
+    plot_policy_value_function(V, pi, method='sarsa')
     plot_diff_epsilon_alpha(n_theta, n_thetadot, n_tau, method='sarsa', num_episodes=num_episodes, gamma=gamma)
     
     Q, pi, log = pendulum_q_learning(n_theta, n_thetadot, n_tau, alpha, epsilon, num_episodes=num_episodes, gamma=gamma, verbose=verbose, plot=True)
     V, log = pendulum_td0(n_theta, n_thetadot, n_tau, pi, alpha, num_episodes=num_episodes, gamma=gamma, verbose=verbose, method='q_learning', plot=True)
+    plot_policy_value_function(V, pi, method='q_learning')
     plot_diff_epsilon_alpha(n_theta, n_thetadot, n_tau, method='q_learning', num_episodes=num_episodes, gamma=gamma)
 
 if __name__ == '__main__':

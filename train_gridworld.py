@@ -19,10 +19,10 @@ def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=Fa
     pi = 0*np.ones(env.num_states, dtype=int)
 
     log = {'n_iter': [], 'V': []}
+    n_iter = 0
     while True:
         # Step 2: policy evaluation
         delta = np.inf
-        n_iter = 0
         while delta >= theta:
             n_iter += 1
             delta = 0
