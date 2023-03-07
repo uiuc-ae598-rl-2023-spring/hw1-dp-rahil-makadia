@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import gridworld
 
 def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False, plot=False):
-    # sourcery skip: extract-method
+    # sourcery skip: extract-method, low-code-quality
     if verbose:
         print('------------- Policy Iteration -------------')
         print(f'hard_version = {hard_version}, theta = {theta}, gamma = {gamma}')
@@ -97,7 +97,8 @@ def gridworld_policy_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=Fa
         plt.savefig('figures/gridworld/traj_return_policy_iteration.png', bbox_inches='tight')
     return V, pi, log
 
-def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False, plot=False):  # sourcery skip: extract-method, sum-comprehension
+def gridworld_value_iteration(hard_version, theta=1e-16, gamma=0.95, verbose=False, plot=False):
+    # sourcery skip: extract-method, low-code-quality, sum-comprehension
     if verbose:
         print('------------- Value Iteration -------------')
         print(f'hard_version = {hard_version}, theta = {theta}, gamma = {gamma}')

@@ -1,0 +1,69 @@
+The following hyperparameters were used for all algorithms unless otherwise specified:
+\begin{itemize}
+    \item $\gamma = 0.95$
+    \item $\alpha = 0.3$
+    \item $\epsilon = 0.8$
+    \item n$_{\theta}$ = n$_{\dot{\theta}}$ = n{$_\tau$} = 41
+\end{itemize}
+
+\subsection*{SARSA}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{pendulum/traj_return_sarsa.png}
+\caption{Pendulum Trajectory and Learning Curve for SARSA}
+\label{fig:pendulum_traj_return_sarsa}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{pendulum/traj_return_td0_sarsa.png}
+\caption{Pendulum Trajectory and Learning Curve for SARSA after TD(0)}
+\label{fig:pendulum_traj_return_td0_sarsa}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\linewidth]{pendulum/V_pi_sarsa.png}
+\caption{Pendulum State Value Function and Policy for SARSA using TD(0)}
+\label{fig:pendulum_V_pi_sarsa}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{pendulum/diff_epsilon_alpha_sarsa.png}
+\caption{Pendulum Effect of $\epsilon$ and $\alpha$ on Learning Curve for SARSA}
+\label{fig:pendulum_diff_epsilon_alpha_sarsa}
+\end{figure}
+
+For the pendulum SARSA algorithm, an example trajectory and learning curve are shown in Figure \ref{fig:pendulum_traj_return_sarsa}. The state value function and policy are shown in Figure \ref{fig:pendulum_V_pi_sarsa}. The SARSA algorithm shown here was run for 3000 episodes. Additionally, TD(0) was applied to the SARSA algorithm to derive a state value function. An example trajectory and learning curve are shown in Figure \ref{fig:pendulum_traj_return_td0_sarsa}. For convenience's sake and to understand the learning at different points of the process, Figure \ref{fig:pendulum_traj_return_sarsa} only shows the trajectory at the last iteration of SARSA. Therefore, this case does not perform well. However, the real fruits of the SARSA algorithm can be seen in Figure \ref{fig:pendulum_traj_return_td0_sarsa}, which is a trajectory that uses the policy derived from SARSA. We see here that the pendulum is controlled in 15 time units and remains controlled for the rest of the trajectory. Finally, the effect of varying $\epsilon$ and $\alpha$ on the learning curve is shown in Figure \ref{fig:pendulum_diff_epsilon_alpha_sarsa}. We see that the learning curve is very sensitive to $\epsilon$ and $\alpha$, especially needing high exploration values for $\epsilon$ to gain useful returns.
+
+\subsection*{Q-Learning}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{pendulum/traj_return_q_learning.png}
+\caption{Pendulum Trajectory and Learning Curve for Q-Learning}
+\label{fig:pendulum_traj_return_q_learning}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{pendulum/traj_return_td0_q_learning.png}
+\caption{Pendulum Trajectory and Learning Curve for Q-Learning after TD(0)}
+\label{fig:pendulum_traj_return_td0_q_learning}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\linewidth]{pendulum/V_pi_q_learning.png}
+\caption{Pendulum State Value Function and Policy for Q-Learning using TD(0)}
+\label{fig:pendulum_V_pi_q_learning}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{pendulum/diff_epsilon_alpha_q_learning.png}
+\caption{Pendulum Effect of $\epsilon$ and $\alpha$ on Learning Curve for Q-Learning}
+\label{fig:pendulum_diff_epsilon_alpha_q_learning}
+\end{figure}
+
+For the pendulum Q-Learning algorithm, an example trajectory and learning curve are shown in Figure \ref{fig:pendulum_traj_return_q_learning}. The state value function and policy are shown in Figure \ref{fig:pendulum_V_pi_q_learning}. The Q-Learning algorithm shown here was run for 3000 episodes. Additionally, TD(0) was applied to the Q-Learning algorithm to derive a state value function. An example trajectory and learning curve are shown in Figure \ref{fig:pendulum_traj_return_td0_q_learning}. For convenience's sake and to understand the learning at different points of the process, Figure \ref{fig:pendulum_traj_return_q_learning} only shows the trajectory at the last iteration of Q-Learning. Therefore, this case does not perform well. However, the real fruits of the Q-Learning algorithm can be seen in Figure \ref{fig:pendulum_traj_return_td0_q_learning}, which is a trajectory that uses the policy derived from Q-Learning. We see here that the pendulum is controlled in 15 time units and remains controlled for the rest of the trajectory. Finally, the effect of varying $\epsilon$ and $\alpha$ on the learning curve is shown in Figure \ref{fig:pendulum_diff_epsilon_alpha_q_learning}. We see that the learning curve is very sensitive to $\epsilon$ and $\alpha$, especially needing high exploration values for $\epsilon$ to gain useful returns.
